@@ -9,14 +9,19 @@ import {
   StyleSheet,
 } from "react-native";
 import { API_URL } from "@env";
-import Toast from "react-native-toast-message"; 
+import Toast from "react-native-toast-message";
+import userAuth from "@/myStore/userAuth";
+import { setLocalStorage } from "@/myStore/storage";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
+
+
+  const loginUser = userAuth((state) => state.loginUser);
+
 
   const handleLogin = async () => {
     if (!username) {
@@ -40,17 +45,28 @@ export default function LoginScreen() {
     }
     try {
       setLoading(true);
-      console.log(API_URL);
+      //console.log(API_URL);
       const response = await axios.post(`${API_URL}/api/login`, {
         username,
         password,
       });
-      Toast.show({
-        type: "success",
-        text1: "Login Successful!",
-        text2: "Welcome to MyHome2U!",
-        position: "top",
-      });
+
+      loginUser(response.data.user);
+
+      if (response.status === 200) {
+
+       await setLocalStorage("userInfo",response.data.user);
+
+        Toast.show({
+          type: "success",
+          text1: "Login Successful!",
+          text2: "Welcome to MyHome2U!",
+          position: "top",
+        });
+
+        navigation.replace("User");
+       
+      }
 
       //console.log(response.data.user);
 
@@ -93,7 +109,9 @@ export default function LoginScreen() {
       />
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>{ loading ? 'please wait processing....': 'Login'}</Text>
+        <Text style={styles.buttonText}>
+          {loading ? "please wait processing...." : "Login"}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("signup")}>

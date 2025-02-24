@@ -10,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignupScreen() {
   const navigation = useNavigation();
@@ -47,6 +48,7 @@ export default function SignupScreen() {
       });
       return;
     }
+
     try {
       setLoading(true);
       const response = await axios.post(`${API_URL}/api/register`, {
