@@ -1,19 +1,23 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const useUserStore = create(
+const useUserAuth = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
+
       loginUser: (user) => set({ user }),
+
       logoutUser: () => set({ user: null }),
+
+      updateUser: (updatedUser) => set({ user: updatedUser }),
     }),
     {
-      name: 'user-storage', 
-      getStorage: () => AsyncStorage, 
+      name: "m2u-storage",
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );
 
-export default useUserStore;
+export default useUserAuth;

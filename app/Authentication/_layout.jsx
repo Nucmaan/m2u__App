@@ -1,21 +1,22 @@
 import { useNavigation } from "expo-router";
 import { Stack } from "expo-router";
-import { useEffect } from "react";
-import { getLocalStorage } from "@/myStore/storage";
+import { useEffect, useState } from "react";
+import useUserAuth from "@/myStore/userAuth";
 
 export default function _layout() {
   const navigation = useNavigation();
+  const [isHydrated, setIsHydrated] = useState(false);
+  const user = useUserAuth((state) => state.user);
 
   useEffect(() => {
-    GetUserDetails();
-  }, [navigation]);
+    if (user) {
 
-  const GetUserDetails = async () => {
-    const userInfo = await getLocalStorage("userInfo");
-    if (userInfo) {
+      setIsHydrated(true);
       navigation.replace("User");
+
     }
-  };
+  }, [user, navigation]);
+
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

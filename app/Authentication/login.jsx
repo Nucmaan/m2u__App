@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { API_URL } from "@env";
 import Toast from "react-native-toast-message";
-import userAuth from "@/myStore/userAuth";
 import { setLocalStorage } from "@/myStore/storage";
+import useUserAuth from "@/myStore/userAuth";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -19,9 +19,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-
-  const loginUser = userAuth((state) => state.loginUser);
-
+  const loginUser = useUserAuth((state) => state.loginUser); 
 
   const handleLogin = async () => {
     if (!username) {
@@ -51,11 +49,12 @@ export default function LoginScreen() {
         password,
       });
 
-      loginUser(response.data.user);
-
       if (response.status === 200) {
 
-       await setLocalStorage("userInfo",response.data.user);
+        const userData = response.data.user;
+        loginUser(userData);
+
+        await setLocalStorage("userInfo", response.data.user);
 
         Toast.show({
           type: "success",
@@ -65,7 +64,6 @@ export default function LoginScreen() {
         });
 
         navigation.replace("User");
-       
       }
 
       //console.log(response.data.user);
