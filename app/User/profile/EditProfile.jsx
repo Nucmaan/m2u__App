@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"; 
 import {
   View,
   Text,
@@ -41,64 +41,67 @@ export default function EditProfile() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      setImageType(result.assets[0].type);
-      setImageName(result.assets[0].fileName);
+      const asset = result.assets[0];
+      const uriParts = asset.uri.split(".");
+      const fileType = uriParts[uriParts.length - 1];
+
+      setImage(asset.uri);
+      setImageType(asset.mimeType || `image/${fileType}`); // Ensure proper MIME type
+      setImageName(asset.fileName || `avatar.${fileType}`); // Ensure file name exists
     }
   };
 
-  const handleSaveChanges = async () => {
-    console.log("Save changes clicked");
 
-    const formData = new FormData();
-    formData.append("id", user._id);
-    if (username) formData.append("username", username);
-    if (password) formData.append("password", password);
-    if (mobile) formData.append("mobile", mobile);
+const handleSaveChanges = async () => {
+  console.log("Save changes clicked");
 
-    if (image) {
-      formData.append("avatar", {
-        uri: image,
-        type: imageType,
-        name: imageName,
-      });
-    }
+  const formData = new FormData();
+  formData.append("id", user._id);
+  if (username) formData.append("username", username);
+  if (password) formData.append("password", password);
+  if (mobile) formData.append("mobile", mobile);
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
+  if (image && image !== user.avatar) {
+    formData.append("avatar", {
+      uri: image,
+      type: imageType || "image/jpeg", // Ensure correct MIME type
+      name: imageName || `avatar-${Date.now()}.jpg`, // Default file name
+    });
+  }
 
-    try {
-      setLoading(true);
-      const response = await axios.put(`${API_URL}/api/user`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+  // Optional: Log the FormData contents (for debugging purposes)
+  for (let pair of formData._parts) {
+    console.log(pair);
+  }
 
-      if (response.status === 201) {
-        const userInfo = response.data.userInfo;
-        updateUser(userInfo);
-        Toast.show({
-          type: "success",
-          text1: "Your account has been updated successfully",
-          position: "top",
-        });
-        navigation.replace("index");
-      }
-    } catch (error) {
+  try {
+    setLoading(true);
+    const response = await axios.put(`${API_URL}/api/user`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.status === 201) {
+      updateUser(response.data.userInfo);
       Toast.show({
-        type: "error",
-        text1: "Update failed",
-        text2:
-          error.response?.data?.message ||
-          "Something went wrong. Please try again.",
+        type: "success",
+        text1: "Your account has been updated successfully",
         position: "top",
       });
-    } finally {
-      setLoading(false);
+      navigation.replace("index");
     }
-  };
+  } catch (error) {
+    console.log(error);
+    Toast.show({
+      type: "error",
+      text1: "Error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
@@ -204,7 +207,13 @@ export default function EditProfile() {
           <ActivityIndicator size="small" color="#fff" />
         ) : (
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
-            Save Changes
+            {
+              loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                "Save Changes"
+              )
+            }
           </Text>
         )}
       </TouchableOpacity>

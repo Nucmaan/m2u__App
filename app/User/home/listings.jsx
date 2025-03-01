@@ -3,11 +3,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigation } from 'expo-router';
 import axios from "axios";
 import { API_URL } from "@env";
+import { useIsFocused } from '@react-navigation/native';
 
 export default function Listings() {
   const navigation = useNavigation();
   const [listings, setListings] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  const [isLoading, setIsLoading] = useState(true); 
+    const isFocused = useIsFocused();
 
   const getListings = useCallback(async () => {
     try {
@@ -35,8 +37,11 @@ export default function Listings() {
   
 
   useEffect(() => {
-    getListings();
-  }, [getListings]);
+    if (isFocused) { 
+      getListings();
+    }
+
+  }, [getListings, isFocused]);
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#F7F7F9' }}>
@@ -44,7 +49,7 @@ export default function Listings() {
         <Text style={styles.headerText}>All Listings</Text>
       </View>
 
-      {isLoading ? ( // Show loading spinner while data is being fetched
+      {isLoading ? ( 
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color="#1A3B5D" />
         </View>

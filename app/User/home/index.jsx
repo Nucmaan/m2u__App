@@ -9,20 +9,23 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { API_URL } from "@env";
+import { useIsFocused } from "@react-navigation/native";
 export default function HomeUser() {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
 
   const [listings, setListings] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  const [isLoading, setIsLoading] = useState(true);
+  const isFocused = useIsFocused();
 
   const getListings = useCallback(async () => {
     try {
-      setIsLoading(true); // Set loading to true before starting the fetch
+      setIsLoading(true);
 
       const response = await axios.get(`${API_URL}/api/listings`);
 
@@ -40,38 +43,15 @@ export default function HomeUser() {
     } catch (error) {
       setListings([]);
     } finally {
-      setIsLoading(false); // Set loading to false after fetching
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    getListings();
-  }, [getListings]);
-
-  const featuredProperties = [
-    {
-      id: 1,
-      title: "Modern Apartment",
-      description: "2 Beds, 1 Bath, 1200 sq ft",
-      price: "$1,200/month",
-      imageUrl: "https://via.placeholder.com/300",
-    },
-    {
-      id: 2,
-      title: "Cozy Cottage",
-      description: "3 Beds, 2 Baths, 1500 sq ft",
-      price: "$2,000/month",
-      imageUrl: "https://via.placeholder.com/300",
-    },
-    {
-      id: 3,
-      title: "Spacious Villa",
-      description: "4 Beds, 3 Baths, 2500 sq ft",
-      price: "$3,500/month",
-      imageUrl: "https://via.placeholder.com/300",
-    },
-    // Add more properties as needed
-  ];
+    if (isFocused) {
+      getListings();
+    }
+  }, [getListings, isFocused]);
 
   const handleSearch = () => {
     navigation.navigate("SearchResults", {
@@ -79,6 +59,18 @@ export default function HomeUser() {
       filter: selectedFilter,
     });
   };
+
+  const rentListings = listings.filter(
+    (listing) => listing.houseType === "Rent"
+  );
+  const buyListings = listings.filter((listing) => listing.houseType === "Buy");
+
+  const filteredListings =
+    selectedFilter === "Rent"
+      ? rentListings
+      : selectedFilter === "Buy"
+      ? buyListings
+      : listings;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -89,7 +81,7 @@ export default function HomeUser() {
         <View style={styles.searchBar}>
           <TextInput
             style={styles.input}
-            placeholder="Search for properties"
+            placeholder="Search For City Name"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -118,35 +110,39 @@ export default function HomeUser() {
       <View style={styles.featuredProperties}>
         <Text style={styles.sectionTitle}>Featured Properties</Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {listings.length === 0 ? (
-            <Text style={styles.noPropertyText}>No Properties Available</Text>
-          ) : (
-            listings.map((property) => (
-              <View key={property._id} style={styles.propertyCard}>
-                <Image
-                  source={{ uri: property.images[0] }}
-                  style={styles.propertyImage}
-                />
-                <Text style={styles.propertyTitle}>{property.title}</Text>
-                <Text style={styles.propertyDescription}>
-                  {property.description}
-                </Text>
-                <Text style={styles.propertyPrice}>${property.price}</Text>
-                <TouchableOpacity
-                  style={styles.viewDetailsButton}
-                  onPress={() =>
-                    navigation.navigate("ViewListing", {
-                      listingId: property._id,
-                    })
-                  }
-                >
-                  <Text style={styles.viewDetailsText}>View Details</Text>
-                </TouchableOpacity>
-              </View>
-            ))
-          )}
-        </ScrollView>
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#F47C48" />
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {filteredListings.length === 0 ? (
+              <Text style={styles.noPropertyText}>No Properties Available</Text>
+            ) : (
+              filteredListings.map((property) => (
+                <View key={property._id} style={styles.propertyCard}>
+                  <Image
+                    source={{ uri: property.images[0] }}
+                    style={styles.propertyImage}
+                  />
+                  <Text style={styles.propertyTitle}>{property.title}</Text>
+                  <Text style={styles.propertyDescription}>
+                    {property.city}
+                  </Text>
+                  <Text style={styles.propertyPrice}>${property.price}</Text>
+                  <TouchableOpacity
+                    style={styles.viewDetailsButton}
+                    onPress={() =>
+                      navigation.navigate("ViewListing", {
+                        listingId: property._id,
+                      })
+                    }
+                  >
+                    <Text style={styles.viewDetailsText}>View Details</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+          </ScrollView>
+        )}
       </View>
 
       <View style={styles.testimonialsSection}>

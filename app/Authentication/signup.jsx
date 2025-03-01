@@ -6,12 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { API_URL } from "@env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+ 
 export default function SignupScreen() {
   const navigation = useNavigation();
   const [username, setUsername] = useState("");
@@ -111,10 +111,13 @@ export default function SignupScreen() {
       <TouchableOpacity
         style={styles.signupButton}
         onPress={handleRegistration}
+        disabled={loading}  
       >
-        <Text style={styles.buttonText}>
-          {loading ? "please wait processing..." : "Sign Up"}
-        </Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" /> 
+        ) : (
+          <Text style={styles.buttonText}>Sign Up</Text>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("login")}>

@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { API_URL } from "@env";
 import Toast from "react-native-toast-message";
@@ -66,8 +67,6 @@ export default function LoginScreen() {
         navigation.replace("User");
       }
 
-      //console.log(response.data.user);
-
       navigation.navigate("index");
     } catch (error) {
       console.log(
@@ -106,10 +105,13 @@ export default function LoginScreen() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>
-          {loading ? "please wait processing...." : "Login"}
-        </Text>
+
+       <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" /> 
+        ) : (
+          <Text style={styles.buttonText}>Login</Text>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("signup")}>

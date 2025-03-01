@@ -5,15 +5,19 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { API_URL } from "@env";
 import Toast from "react-native-toast-message";
+import useUserAuth from "@/myStore/userAuth";
 
 export default function ContactForm() {
+  const user = useUserAuth((state) => state.user);
+
   const [form, setForm] = useState({
-    name: "",
-    email: "",
+    name: user?.username,
+    email: user?.email,
     subject: "",
     message: "",
   });
@@ -25,6 +29,15 @@ export default function ContactForm() {
   };
 
    const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.subject || !form.message) {
+      Toast.show({
+        type: "error",
+        text1: "Missing fields",
+        text2: "Please fill in all required fields.",
+        position: "top",
+      });
+      return;
+    }
     if (loading) return;
     setLoading(true);
 
@@ -63,6 +76,7 @@ export default function ContactForm() {
         placeholderTextColor="#7A7A7A"
         value={form.name}
         onChangeText={(text) => handleChange("name", text)}
+        editable={false}
       />
 
       <TextInput
@@ -72,6 +86,7 @@ export default function ContactForm() {
         keyboardType="email-address"
         value={form.email}
         onChangeText={(text) => handleChange("email", text)}
+        editable={false}
       />
 
       <TextInput
@@ -97,9 +112,11 @@ export default function ContactForm() {
         style={[styles.button, loading && styles.buttonDisabled]}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>
-          {loading ? "Sending..." : "Send Message"}
-        </Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Text style={styles.buttonText}>Send Message</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

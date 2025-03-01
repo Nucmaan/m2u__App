@@ -6,6 +6,8 @@ export default function _layout() {
     return (
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="payNow" />
+          <Stack.Screen name="invoice" />
         </Stack>
       );
 }

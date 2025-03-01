@@ -36,6 +36,7 @@ export default function _layout() {
           fontSize: 12,
           fontWeight: "600",
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen
