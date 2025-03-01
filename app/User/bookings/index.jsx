@@ -58,7 +58,6 @@ export default function UserBookings() {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#F47C48" />
-        <Text style={styles.loadingText}>Loading your bookings...</Text>
       </View>
     )
   }
@@ -81,7 +80,6 @@ export default function UserBookings() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Bookings</Text>
       <FlatList
         data={userBookings}
         keyExtractor={(item) => item._id.toString()}
