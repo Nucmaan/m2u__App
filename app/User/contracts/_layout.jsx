@@ -21,8 +21,38 @@ export default function _layout() {
             headerTitle: 'Contracts and payments',
           }}
           />
-          <Stack.Screen name="payNow" />
-          <Stack.Screen name="invoice" />
+          <Stack.Screen name="payNow"
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { 
+              color: '#FFFFFF' 
+            },
+            headerStyle: { 
+              backgroundColor: '#1A3B5D'
+            },
+            headerBackTitleStyle: { 
+              color: '#FFFFFF'
+            },
+            headerTitle: 'Payment information',
+          }}
+          />
+          <Stack.Screen name="invoice" 
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { 
+              color: '#FFFFFF' 
+            },
+            headerStyle: { 
+              backgroundColor: '#1A3B5D'
+            },
+            headerBackTitleStyle: { 
+              color: '#FFFFFF'
+            },
+            headerTitle: 'Invoice details',
+          }}
+          />
         </Stack>
       );
 }

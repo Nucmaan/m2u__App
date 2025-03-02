@@ -69,8 +69,7 @@ const handleSaveChanges = async () => {
     });
   }
 
-  // Optional: Log the FormData contents (for debugging purposes)
-  for (let pair of formData._parts) {
+   for (let pair of formData._parts) {
     console.log(pair);
   }
 
@@ -79,6 +78,7 @@ const handleSaveChanges = async () => {
     const response = await axios.put(`${API_URL}/api/user`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Accept: "application/json",
       },
     });
 
