@@ -57,7 +57,7 @@ export default function Invoice() {
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: colors.background, padding: 20 }}>
       <View style={{ backgroundColor: "#fff", borderRadius: 10, padding: 15, marginBottom: 20, elevation: 5 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", color: colors.primaryText }}>Invoice: {invoiceId}</Text>
+        <Text style={{ fontSize: 17, fontWeight: "bold", color: colors.primaryText }}>Invoice ID : {invoiceId}</Text>
         <Text style={{ fontSize: 18, fontWeight: "600", color: colors.secondaryText, marginVertical: 10 }}>Invoice Details</Text>
 
         {/* Owner Details */}

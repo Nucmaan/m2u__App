@@ -145,6 +145,19 @@ export default function HomeUser() {
         )}
       </View>
 
+      <View style={styles.ctaSection}>
+        <Text style={styles.ctaText}>Ready to find your next home?</Text>
+        <Text style={styles.ctaSubtitle}>
+          Start your journey with us today!
+        </Text>
+        <TouchableOpacity
+          style={styles.ctaButton}
+          onPress={() => navigation.navigate("listings")}
+        >
+          <Text style={styles.ctaButtonText}>Explore Listings</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.testimonialsSection}>
         <Text style={styles.sectionTitle}>What Our Users Say</Text>
         <View style={styles.testimonialCard}>
@@ -178,18 +191,7 @@ export default function HomeUser() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.ctaSection}>
-        <Text style={styles.ctaText}>Ready to find your next home?</Text>
-        <Text style={styles.ctaSubtitle}>
-          Start your journey with us today!
-        </Text>
-        <TouchableOpacity
-          style={styles.ctaButton}
-          onPress={() => navigation.navigate("listings")}
-        >
-          <Text style={styles.ctaButtonText}>Explore Listings</Text>
-        </TouchableOpacity>
-      </View>
+      
     </ScrollView>
   );
 }
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   contactUsSection: {
-    marginBottom: 20,
+    marginBottom: 5,
     backgroundColor: "#F7F7F9",
     padding: 20,
     borderRadius: 10,
@@ -341,7 +343,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   testimonialsSection: {
-    marginBottom: 20,
+    marginBottom: 10,
     backgroundColor: "#F7F7F9",
     padding: 20,
     borderRadius: 10,
